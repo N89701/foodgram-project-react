@@ -96,6 +96,6 @@ class RecipeViewSet(ModelViewSet):
         [file_list.append(
             '{}. {} - {}{}.'.format(count, *ingredient))
             for count, ingredient in enumerate(ingredients, 1)]
-        return HttpResponse(f'Cписок покупок на {datetime.now().date()}:\n' +
-                            '\n'.join(file_list),
+        return HttpResponse(f'Cписок покупок на {datetime.now().date()}:\n'
+                            + '\n'.join(file_list),
                             content_type='attachment/pdf')

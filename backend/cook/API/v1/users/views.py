@@ -10,7 +10,6 @@ from API.v1.users.serializers import FollowSerializer
 from users.models import User, Follow
 
 
-
 class CustomUserViewSet(UserViewSet):
     pagination_class = MyPaginator
 

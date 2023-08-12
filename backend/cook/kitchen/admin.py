@@ -27,16 +27,16 @@ class RecipeIngredientInline(admin.TabularInline):
 class RecipeAdmin(admin.ModelAdmin):
     list_display = [
         field.name for field in Recipe._meta.fields if field.name != "id"
-        ]
+    ]
     search_fields = [
         field.name for field in Recipe._meta.fields if field.name != "id"
-        ]
+    ]
     list_filter = [
         field.name for field in Recipe._meta.fields if field.name != "id"
-        ]
+    ]
     list_editable = [
         field.name for field in Recipe._meta.fields if field.name != "id"
-        ]
+    ]
     inlines = [RecipeIngredientInline, ]
     empty_value_display = '-пусто-'
     list_display_links = None
