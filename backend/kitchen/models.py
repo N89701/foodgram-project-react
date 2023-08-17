@@ -15,7 +15,7 @@ class Ingredient(models.Model):
 
     def __str__(self):
         return self.name
-    
+
 
 class Tag(models.Model):
     name = models.CharField(max_length=settings.LENGTH_LIMITS['tag_name'])
@@ -27,7 +27,7 @@ class Tag(models.Model):
                 message='Введите # и 6 символов(цифры и латинские буквы)'
             )
         ]
-    ) 
+    )
     slug = models.SlugField(
         unique=True,
         max_length=settings.LENGTH_LIMITS['tag_slug']
@@ -67,7 +67,7 @@ class RecipeIngredient(models.Model):
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
     amount = models.PositiveSmallIntegerField(
         validators=[MinValueValidator(1)]
-        )
+    )
 
     class Meta:
         ordering = ['recipe']

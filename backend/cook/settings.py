@@ -26,7 +26,7 @@ INSTALLED_APPS = [
     "kitchen.apps.KitchenConfig",
     "api.apps.ApiConfig",
     "users.apps.UsersConfig",
-    
+
 ]
 
 MIDDLEWARE = [

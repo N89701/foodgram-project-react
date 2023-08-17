@@ -1,8 +1,8 @@
-from django.contrib.auth.models import AbstractUser
 from django.conf import settings
+from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from django.contrib.auth.validators import UnicodeUsernameValidator
 
 from .utils import validate_username
 
@@ -14,12 +14,15 @@ class User(AbstractUser):
     email = models.EmailField(
         unique=True,
         max_length=settings.LENGTH_LIMITS['user_email']
-        )
+    )
     username = models.CharField(
         _('username'),
         max_length=150,
         unique=True,
-        help_text=_('Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.'),
+        help_text=_(
+            'Required. 150 characters or fewer.'
+            'Letters, digits and @/./+/-/_ only.'
+        ),
         validators=[UnicodeUsernameValidator, validate_username],
         error_messages={
             'unique': _("A user with that username already exists."),
@@ -28,11 +31,11 @@ class User(AbstractUser):
     first_name = models.CharField(
         _('first name'),
         max_length=settings.LENGTH_LIMITS['user_first_name']
-        )
+    )
     password = models.CharField(
         _('password'),
         max_length=settings.LENGTH_LIMITS['user_password']
-        )
+    )
 
     class Meta:
         ordering = ['username']
@@ -64,4 +67,4 @@ class Follow(models.Model):
                 fields=['user', 'author'],
                 name='repeated follow attemtp'
             )
-]
+        ]

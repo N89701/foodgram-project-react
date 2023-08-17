@@ -2,7 +2,6 @@ from django.core.validators import MinValueValidator
 from django.db import transaction
 from django.db.models import F
 from djoser.serializers import UserSerializer
-from django.shortcuts import get_object_or_404
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework.serializers import (IntegerField, ModelSerializer,
                                         PrimaryKeyRelatedField, ReadOnlyField,
@@ -60,7 +59,7 @@ class FollowCreateSerializer(ModelSerializer):
     class Meta:
         model = Follow
         fields = '__all__'
-    
+
     def validate(self, data):
         author = data.get('author')
         user = data.get('user')
@@ -185,7 +184,7 @@ class RecipeCUDSerializer(RecipeInFollowSerializer):
         if len(set(value)) != len(value):
             raise ValidationError('Теги не должны повторяться')
         return value
-    
+
     def validate_ingredients(self, value):
         if not value:
             raise ValidationError('Укажите ингредиент(ы)')
@@ -237,7 +236,7 @@ class ShoppingCartSerializer(ModelSerializer):
     class Meta:
         model = ShoppingCart
         fields = '__all__'
-    
+
     def validate(self, data):
         user = data.get('user')
         if user.shoppingcart_set.filter(recipe=data['recipe']).exists():
@@ -251,7 +250,7 @@ class FavoriteSerializer(ModelSerializer):
     class Meta:
         model = Favorite
         fields = '__all__'
-    
+
     def validate(self, data):
         user = data.get('user')
         if user.favorite_set.filter(recipe=data['recipe']).exists():

@@ -5,7 +5,7 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
-from rest_framework import exceptions, status
+from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.permissions import SAFE_METHODS, IsAuthenticated
 from rest_framework.response import Response
@@ -15,8 +15,8 @@ from api.pagination import LimitPageNumberPagination
 from api.permissions import IsAuthorOrAdminOrReadOnly
 from api.filters import RecipeFilter, SearchFilter
 from api.serializers import (IngredientSerializer, RecipeCUDSerializer,
-                             RecipeInFollowSerializer, FollowCreateSerializer,
-                             TagSerializer, FollowSerializer, RecipeSerializer,
+                             FollowCreateSerializer, TagSerializer,
+                             FollowSerializer, RecipeSerializer,
                              ShoppingCartSerializer, FavoriteSerializer)
 from kitchen.models import (Favorite, Ingredient, Recipe, RecipeIngredient,
                             ShoppingCart, Tag)
