@@ -46,7 +46,7 @@ class RecipeViewSet(ModelViewSet):
         if self.request.method in SAFE_METHODS:
             return RecipeSerializer
         return RecipeCUDSerializer
-    
+
     def get_queryset(self):
         user = self.request.user
         main_query = Recipe.objects.all().prefetch_related(

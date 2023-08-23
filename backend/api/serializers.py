@@ -52,10 +52,9 @@ class FollowSerializer(CustomUserSerializer):
             recipes = recipes[:recipes_limit]
         serializer = RecipeInFollowSerializer(recipes, many=True)
         return serializer.data
-    
+
     def get_recipes_count(self, obj):
         return obj.recipes.count()
-
 
 
 class FollowCreateSerializer(ModelSerializer):
@@ -66,7 +65,7 @@ class FollowCreateSerializer(ModelSerializer):
             UniqueTogetherValidator(
                 queryset=Follow.objects.all(),
                 fields=['user', 'author'],
-                message='Вы уже подписаны на этого пользователя!'   
+                message='Вы уже подписаны на этого пользователя!'
             )
         ]
 

@@ -26,7 +26,7 @@ class RecipeFilter(FilterSet):
         if value and user.is_authenticated:
             return queryset.filter(shopping_cart__user=user)
         return queryset
-    
+
     class Meta:
         model = Recipe
         fields = ('tags', 'author',)
