@@ -15,6 +15,9 @@ class Ingredient(models.Model):
 
     def __str__(self):
         return self.name
+    
+    class Meta:
+        ordering = ('name',)
 
 
 class Tag(models.Model):
@@ -35,6 +38,9 @@ class Tag(models.Model):
 
     def __str__(self):
         return self.name
+    
+    class Meta:
+        ordering = ('name',)
 
 
 class Recipe(models.Model):
@@ -54,34 +60,49 @@ class Recipe(models.Model):
     cooking_time = models.PositiveSmallIntegerField(
         validators=[MinValueValidator(1)]
     )
+    pub_date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.name
 
     class Meta:
-        ordering = ['-id']
+        ordering = ('-pub_date',)
 
 
 class RecipeIngredient(models.Model):
-    name = models.ForeignKey(Ingredient, on_delete=models.DO_NOTHING)
+    name = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
     amount = models.PositiveSmallIntegerField(
         validators=[MinValueValidator(1)]
     )
 
     class Meta:
-        ordering = ['recipe']
+        ordering = ('recipe',)
+        constraints = (
+            models.UniqueConstraint(
+                fields=('name', 'recipe'),
+                name='no double ingredient for one recipe'
+            ),
+        )
 
     def __str__(self):
         return f'{self.name}, {self.amount}{self.name.measurement_unit}'
 
 
 class Favorite(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='favorites'
+    )
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE,
+        related_name='admirers'
+    )
 
     class Meta:
-        ordering = ['user']
+        ordering = ('user', 'recipe')
         constraints = (
             models.UniqueConstraint(
                 fields=('user', 'recipe'),
@@ -91,11 +112,19 @@ class Favorite(models.Model):
 
 
 class ShoppingCart(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='shopping_carts'
+    )
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE,
+        related_name='buyers'
+    )
 
     class Meta:
-        ordering = ['user']
+        ordering = ('user', 'recipe')
         constraints = (
             models.UniqueConstraint(
                 fields=('user', 'recipe'),

@@ -5,19 +5,17 @@ from .models import (Favorite, Ingredient, Recipe, RecipeIngredient,
 
 
 class IngredientAdmin(admin.ModelAdmin):
-    list_display = ('name', 'measurement_unit')
+    list_display = ('id', 'name', 'measurement_unit')
     search_fields = ('name', 'measurement_unit')
     list_filter = ('name', 'measurement_unit')
     list_editable = ('name', 'measurement_unit')
-    list_display_links = None
 
 
 class TagAdmin(admin.ModelAdmin):
-    list_display = ('name', 'color', 'slug')
+    list_display = ('id', 'name', 'color', 'slug')
     search_fields = ('name', 'color', 'slug')
     list_filter = ('name', 'color', 'slug')
     list_editable = ('name', 'color', 'slug')
-    list_display_links = None
 
 
 class RecipeIngredientInline(admin.TabularInline):
@@ -31,29 +29,22 @@ class RecipeAdmin(admin.ModelAdmin):
     search_fields = [
         field.name for field in Recipe._meta.fields if field.name != 'id'
     ]
-    list_filter = [
-        field.name for field in Recipe._meta.fields if field.name != 'id'
-    ]
-    list_editable = [
-        field.name for field in Recipe._meta.fields if field.name != 'id'
-    ]
+    list_filter = ('tags',)
+    list_editable = ('name', 'cooking_time')
     inlines = [RecipeIngredientInline, ]
     empty_value_display = '-пусто-'
-    list_display_links = None
 
 
 class FavoriteAdmin(admin.ModelAdmin):
-    list_display = ('user', 'recipe')
+    list_display = ('id', 'user', 'recipe')
     search_fields = ('user', 'recipe')
     list_filter = ('user', 'recipe')
-    list_display_links = None
 
 
 class ShopingCartAdmin(admin.ModelAdmin):
-    list_display = ('user', 'recipe')
+    list_display = ('id', 'user', 'recipe')
     search_fields = ('user', 'recipe')
     list_filter = ('user', 'recipe')
-    list_display_links = None
 
 
 admin.site.register(Ingredient, IngredientAdmin)

@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from django.db.models import Sum
+from django.db.models import Exists, OuterRef, Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
@@ -14,10 +14,11 @@ from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from api.pagination import LimitPageNumberPagination
 from api.permissions import IsAuthorOrAdminOrReadOnly
 from api.filters import RecipeFilter, SearchFilter
-from api.serializers import (IngredientSerializer, RecipeCUDSerializer,
-                             FollowCreateSerializer, TagSerializer,
-                             FollowSerializer, RecipeSerializer,
-                             ShoppingCartSerializer, FavoriteSerializer)
+from api.serializers import (
+    CustomUserSerializer, IngredientSerializer, RecipeCUDSerializer,
+    FollowCreateSerializer, TagSerializer, FollowSerializer, RecipeSerializer,
+    ShoppingCartSerializer, FavoriteSerializer, RecipeInFollowSerializer
+)
 from kitchen.models import (Favorite, Ingredient, Recipe, RecipeIngredient,
                             ShoppingCart, Tag)
 from users.models import User, Follow
@@ -36,7 +37,6 @@ class IngredientViewSet(ReadOnlyModelViewSet):
 
 
 class RecipeViewSet(ModelViewSet):
-    queryset = Recipe.objects.all()
     permission_classes = (IsAuthorOrAdminOrReadOnly,)
     pagination_class = LimitPageNumberPagination
     filter_backends = (DjangoFilterBackend,)
@@ -46,6 +46,20 @@ class RecipeViewSet(ModelViewSet):
         if self.request.method in SAFE_METHODS:
             return RecipeSerializer
         return RecipeCUDSerializer
+    
+    def get_queryset(self):
+        user = self.request.user
+        main_query = Recipe.objects.all().prefetch_related(
+            'tags'
+        ).select_related('author')
+        if user.is_authenticated:
+            favorite = user.favorites.filter(id=OuterRef('id'))
+            shopping_cart = user.shopping_carts.filter(id=OuterRef('id'))
+            return main_query.annotate(
+                is_favorited=Exists(favorite),
+                is_in_shopping_cart=Exists(shopping_cart)
+            )
+        return main_query
 
     @action(detail=True, methods=['post', 'delete'],
             permission_classes=[IsAuthenticated])
@@ -61,7 +75,8 @@ class RecipeViewSet(ModelViewSet):
             return self.create_object(ShoppingCartSerializer, pk, request)
         return self.delete_object(ShoppingCart, request.user, pk)
 
-    def create_object(self, serializer, pk, request):
+    @staticmethod
+    def create_object(serializer, pk, request):
         recipe = get_object_or_404(Recipe, id=pk)
         data = {
             'user': request.user.id,
@@ -70,9 +85,11 @@ class RecipeViewSet(ModelViewSet):
         serializer = serializer(data=data, context={'request': request})
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        short_serializer = RecipeInFollowSerializer(recipe)
+        return Response(short_serializer.data, status=status.HTTP_201_CREATED)
 
-    def delete_object(self, model, user, pk):
+    @staticmethod
+    def delete_object(model, user, pk):
         obj = model.objects.filter(user=user, recipe__id=pk)
         if obj.delete()[0]:
             return Response(status=status.HTTP_204_NO_CONTENT)
@@ -119,7 +136,11 @@ class CustomUserViewSet(UserViewSet):
             )
             serializer.is_valid(raise_exception=True)
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            user_serializer = CustomUserSerializer(author)
+            return Response(
+                user_serializer.data,
+                status=status.HTTP_201_CREATED
+            )
         unfollow = Follow.objects.filter(user=user, author=author).delete()
         if unfollow[0]:
             return Response(status=status.HTTP_204_NO_CONTENT)

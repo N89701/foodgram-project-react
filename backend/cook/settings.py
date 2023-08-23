@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -9,8 +10,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY', default='token')
 
 DEBUG = os.getenv('DEBUG') == 'True'
+# DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -19,6 +21,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    #"debug_toolbar",
     'rest_framework',
     'django_filters',
     "rest_framework.authtoken",
@@ -37,7 +40,12 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    #"debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
+
+# INTERNAL_IPS = [
+#     "127.0.0.1",
+# ]
 
 ROOT_URLCONF = "cook.urls"
 
@@ -69,6 +77,13 @@ DATABASES = {
         'DB_PORT': os.getenv('DB_PORT', '5432'),
     }
 }
+
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.sqlite3",
+#         "NAME": BASE_DIR / "db.sqlite3",
+#     }
+# }
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -120,9 +135,9 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
+        #'rest_framework.authentication.SessionAuthentication'
     ],
     'SEARCH_PARAM': 'name',
-    'PAGE_SIZE': 6,
 }
 
 DJOSER = {
@@ -150,3 +165,5 @@ LENGTH_LIMITS = {
     'tag_slug': 50,
     'recipe_name': 200
 }
+
+PAGE_SIZE = 6

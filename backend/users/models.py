@@ -23,7 +23,7 @@ class User(AbstractUser):
             'Required. 150 characters or fewer.'
             'Letters, digits and @/./+/-/_ only.'
         ),
-        validators=[UnicodeUsernameValidator, validate_username],
+        validators=[UnicodeUsernameValidator(), validate_username],
         error_messages={
             'unique': _("A user with that username already exists."),
         },
@@ -38,7 +38,7 @@ class User(AbstractUser):
     )
 
     class Meta:
-        ordering = ['username']
+        ordering = ('username',)
 
     def __str__(self):
         return self.username
@@ -57,7 +57,7 @@ class Follow(models.Model):
     )
 
     class Meta:
-        ordering = ['user']
+        ordering = ('user', 'author')
         constraints = [
             models.CheckConstraint(
                 check=~models.Q(user=models.F('author')),

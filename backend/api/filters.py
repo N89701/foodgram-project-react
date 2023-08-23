@@ -5,11 +5,6 @@ from kitchen.models import Recipe, Tag
 
 
 class RecipeFilter(FilterSet):
-
-    class Meta:
-        model = Recipe
-        fields = ('tags', 'author',)
-
     tags = filters.ModelMultipleChoiceFilter(
         field_name='tags__slug',
         to_field_name='slug',
@@ -31,6 +26,10 @@ class RecipeFilter(FilterSet):
         if value and user.is_authenticated:
             return queryset.filter(shopping_cart__user=user)
         return queryset
+    
+    class Meta:
+        model = Recipe
+        fields = ('tags', 'author',)
 
 
 class IngredientTypeFilter(SearchFilter):
