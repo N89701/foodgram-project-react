@@ -15,9 +15,9 @@ from api.pagination import LimitPageNumberPagination
 from api.permissions import IsAuthorOrAdminOrReadOnly
 from api.filters import RecipeFilter, SearchFilter
 from api.serializers import (
-    CustomUserSerializer, IngredientSerializer, RecipeCUDSerializer,
-    FollowCreateSerializer, TagSerializer, FollowSerializer, RecipeSerializer,
-    ShoppingCartSerializer, FavoriteSerializer, RecipeInFollowSerializer
+    IngredientSerializer, RecipeCUDSerializer, FollowCreateSerializer,
+    TagSerializer, FollowSerializer, RecipeSerializer, ShoppingCartSerializer,
+    FavoriteSerializer, RecipeInFollowSerializer
 )
 from kitchen.models import (Favorite, Ingredient, Recipe, RecipeIngredient,
                             ShoppingCart, Tag)
@@ -53,11 +53,11 @@ class RecipeViewSet(ModelViewSet):
             'tags'
         ).select_related('author')
         if user.is_authenticated:
-            favorite = user.favorites.filter(id=OuterRef('id'))
-            shopping_cart = user.shopping_carts.filter(id=OuterRef('id'))
-            return main_query.annotate(
-                is_favorited=Exists(favorite),
-                is_in_shopping_cart=Exists(shopping_cart)
+            favorite = user.favorites.filter(recipe=OuterRef('pk')) 
+            shopping_cart = user.shopping_carts.filter(recipe=OuterRef('pk')) 
+            return main_query.annotate( 
+                is_favorited=Exists(favorite), 
+                is_in_shopping_cart=Exists(shopping_cart) 
             )
         return main_query
 
@@ -101,7 +101,7 @@ class RecipeViewSet(ModelViewSet):
     def download_shopping_cart(self, request, **kwargs):
         ingredients = (
             RecipeIngredient.objects
-            .filter(recipe__shoppingcart__user=request.user)
+            .filter(recipe__buyers__user=request.user)
             .values('name')
             .annotate(total_amount=Sum('amount'))
             .values_list('name__name', 'total_amount',
@@ -119,6 +119,11 @@ class RecipeViewSet(ModelViewSet):
 class CustomUserViewSet(UserViewSet):
     pagination_class = LimitPageNumberPagination
 
+    def get_permissions(self):
+        if self.action == 'me':
+            return (IsAuthenticated(),)
+        return super().get_permissions()
+    
     @action(
         detail=True,
         permission_classes=(IsAuthenticated,),
@@ -136,7 +141,10 @@ class CustomUserViewSet(UserViewSet):
             )
             serializer.is_valid(raise_exception=True)
             serializer.save()
-            user_serializer = CustomUserSerializer(author)
+            user_serializer = FollowSerializer(
+                author,
+                context={'request': request}
+            )
             return Response(
                 user_serializer.data,
                 status=status.HTTP_201_CREATED
@@ -144,7 +152,10 @@ class CustomUserViewSet(UserViewSet):
         unfollow = Follow.objects.filter(user=user, author=author).delete()
         if unfollow[0]:
             return Response(status=status.HTTP_204_NO_CONTENT)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {'errors': 'Вы не подписаны на данного пользователя'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
 
     @action(
         detail=False,

@@ -4,7 +4,7 @@ from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-from .utils import validate_username
+from .validators import validate_username
 
 
 class User(AbstractUser):
@@ -32,6 +32,7 @@ class User(AbstractUser):
         _('first name'),
         max_length=settings.LENGTH_LIMITS['user_first_name']
     )
+    last_name = models.CharField(_('last name'), max_length=150)
     password = models.CharField(
         _('password'),
         max_length=settings.LENGTH_LIMITS['user_password']

@@ -1,4 +1,4 @@
-class api {
+class Api {
   constructor (url, headers) {
     this._url = url
     this._headers = headers
@@ -400,4 +400,4 @@ class api {
   }
 }
 
-export default new api(process.env.api_URL || 'http://localhost', { 'content-type': 'application/json' })
+export default new Api(process.env.API_URL || 'http://localhost', { 'content-type': 'application/json' })

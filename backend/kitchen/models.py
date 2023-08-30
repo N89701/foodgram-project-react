@@ -84,6 +84,7 @@ class RecipeIngredient(models.Model):
                 name='no double ingredient for one recipe'
             ),
         )
+        default_related_name = 'recipeingredients'
 
     def __str__(self):
         return f'{self.name}, {self.amount}{self.name.measurement_unit}'

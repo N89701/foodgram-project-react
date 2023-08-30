@@ -4,7 +4,7 @@ from django.db.models import F
 from djoser.serializers import UserSerializer
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework.serializers import (
-    IntegerField, ModelSerializer, PrimaryKeyRelatedField,
+    BooleanField, IntegerField, ModelSerializer, PrimaryKeyRelatedField,
     SerializerMethodField, ValidationError
 )
 from rest_framework.validators import UniqueTogetherValidator
@@ -114,8 +114,8 @@ class RecipeSerializer(RecipeInFollowSerializer):
     tags = TagSerializer(many=True)
     author = UserSerializer()
     ingredients = SerializerMethodField()
-    is_favorited = SerializerMethodField()
-    is_in_shopping_cart = SerializerMethodField()
+    is_favorited = BooleanField(read_only=True)
+    is_in_shopping_cart = BooleanField(read_only=True)
 
     class Meta:
         model = Recipe
@@ -132,28 +132,12 @@ class RecipeSerializer(RecipeInFollowSerializer):
             'cooking_time'
         )
 
-    def get_is_favorited(self, obj):
-        request = self.context.get('request')
-        user = request.user
-        return (
-            request and user.is_authenticated
-            and obj.is_favorited
-        )
-
-    def get_is_in_shopping_cart(self, obj):
-        request = self.context.get('request')
-        user = request.user
-        return (
-            request and user.is_authenticated
-            and obj.is_in_shopping_cart
-        )
-
     def get_ingredients(self, recipe):
         return recipe.ingredients.values(
             'id',
             'name',
             'measurement_unit',
-            amount=F('recipeingredient__amount')
+            amount=F('recipeingredients__amount')
         )
 
 

@@ -10,9 +10,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY', default='token')
 
 DEBUG = os.getenv('DEBUG') == 'True'
-# DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '158.160.72.196', 'pleasegivemecook.myftp.biz']
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -21,7 +20,6 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    # "debug_toolbar",
     'rest_framework',
     'django_filters',
     "rest_framework.authtoken",
@@ -40,12 +38,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    # "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
-
-# INTERNAL_IPS = [
-#     "127.0.0.1",
-# ]
 
 ROOT_URLCONF = "cook.urls"
 
@@ -69,21 +62,14 @@ WSGI_APPLICATION = "cook.wsgi.application"
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('POSTGRES_DB', 'foodgram'),
-        'USER': os.getenv('POSTGRES_USER', 'foodgram_user'),
-        'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'ulfsnftmhg'),
-        'HOST': os.getenv('DB_HOST', 'db'),
-        'DB_PORT': os.getenv('DB_PORT', '5432'),
+        'ENGINE': os.getenv('ENGINE', 'django.db.backends.postgresql'),
+        'NAME': os.getenv('NAME', 'postgres'),
+        'USER': os.getenv('USER', 'postgres'),
+        'PASSWORD': os.getenv('PASSWORD', 'postgres'),
+        'HOST': os.getenv('HOST', 'db'),
+        'PORT': os.getenv('PORT', '5432'),
     }
 }
-
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.sqlite3",
-#         "NAME": BASE_DIR / "db.sqlite3",
-#     }
-# }
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -102,7 +88,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 STATIC_URL = '/static/'
 
-STATIC_ROOT = BASE_DIR / 'static'
+STATIC_ROOT = '/static/static'
 
 MEDIA_URL = '/media/'
 
@@ -135,7 +121,6 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
-        # 'rest_framework.authentication.SessionAuthentication'
     ],
     'SEARCH_PARAM': 'name',
 }
