@@ -58,7 +58,7 @@ class RecipeViewSet(ModelViewSet):
             return main_query.annotate(
                 is_favorited=Exists(favorite),
                 is_in_shopping_cart=Exists(shopping_cart)
-                )
+            )
         return main_query
 
     @action(detail=True, methods=['post', 'delete'],

@@ -10,7 +10,7 @@ Django, Django Rest Framework, React, Docker, PostgreSQL
 Для локального запуска необходимо:  
 Клонировать репозиторий:  
 ```
-git clone git@github.com:N89701/foodgram-project-react
+git clone git@github.com:N89701/foodgram-project-react.git
 ```
 Перейдите в папку infra:
 ```
