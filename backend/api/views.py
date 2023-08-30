@@ -53,12 +53,12 @@ class RecipeViewSet(ModelViewSet):
             'tags'
         ).select_related('author')
         if user.is_authenticated:
-            favorite = user.favorites.filter(recipe=OuterRef('pk')) 
-            shopping_cart = user.shopping_carts.filter(recipe=OuterRef('pk')) 
-            return main_query.annotate( 
-                is_favorited=Exists(favorite), 
-                is_in_shopping_cart=Exists(shopping_cart) 
-            )
+            favorite = user.favorites.filter(recipe=OuterRef('pk'))
+            shopping_cart = user.shopping_carts.filter(recipe=OuterRef('pk'))
+            return main_query.annotate(
+                is_favorited=Exists(favorite),
+                is_in_shopping_cart=Exists(shopping_cart)
+                )
         return main_query
 
     @action(detail=True, methods=['post', 'delete'],
@@ -123,7 +123,7 @@ class CustomUserViewSet(UserViewSet):
         if self.action == 'me':
             return (IsAuthenticated(),)
         return super().get_permissions()
-    
+
     @action(
         detail=True,
         permission_classes=(IsAuthenticated,),
