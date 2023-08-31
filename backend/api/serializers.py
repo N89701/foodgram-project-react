@@ -213,7 +213,7 @@ class RecipeCUDSerializer(RecipeInFollowSerializer):
         )
 
     def to_representation(self, instance):
-        user = self.request.user
+        user = self.context.get('request').user
         instance.is_favorited = user.favorites.filter(
             recipe=instance
         ).exists()
