@@ -141,7 +141,9 @@ DJOSER = {
 
 LENGTH_LIMITS = {
     'user_email': 254,
+    'user_username': 150,
     'user_first_name': 150,
+    'user_last_name': 150,
     'user_password': 150,
     'ingredient_name': 60,
     'ingredient_measurement_unit': 30,

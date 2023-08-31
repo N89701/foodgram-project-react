@@ -213,6 +213,11 @@ class RecipeCUDSerializer(RecipeInFollowSerializer):
         )
 
     def to_representation(self, instance):
+        user = self.request.user
+        instance.is_favorited = user.favorites.filter(recipe=instance).exists()
+        instance.is_in_shopping_cart = user.shopping_carts.filter(
+            recipe=instance
+        ).exists()
         return RecipeSerializer(instance, context=self.context).data
 
 
@@ -222,7 +227,7 @@ class ShoppingCartSerializer(ModelSerializer):
         fields = '__all__'
         validators = [
             UniqueTogetherValidator(
-                queryset=Favorite.objects.all(),
+                queryset=ShoppingCart.objects.all(),
                 fields=['user', 'recipe'],
                 message='Рецепт уже добавлен в корзину'
             )

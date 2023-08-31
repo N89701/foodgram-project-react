@@ -17,7 +17,7 @@ class User(AbstractUser):
     )
     username = models.CharField(
         _('username'),
-        max_length=150,
+        max_length=settings.LENGTH_LIMITS['user_username'],
         unique=True,
         help_text=_(
             'Required. 150 characters or fewer.'
@@ -32,7 +32,10 @@ class User(AbstractUser):
         _('first name'),
         max_length=settings.LENGTH_LIMITS['user_first_name']
     )
-    last_name = models.CharField(_('last name'), max_length=150)
+    last_name = models.CharField(
+        _('last name'),
+        settings.LENGTH_LIMITS['user_last_name']
+    )
     password = models.CharField(
         _('password'),
         max_length=settings.LENGTH_LIMITS['user_password']
