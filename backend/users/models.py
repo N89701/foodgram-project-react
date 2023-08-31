@@ -34,7 +34,7 @@ class User(AbstractUser):
     )
     last_name = models.CharField(
         _('last name'),
-        settings.LENGTH_LIMITS['user_last_name']
+        max_length=settings.LENGTH_LIMITS['user_last_name']
     )
     password = models.CharField(
         _('password'),
