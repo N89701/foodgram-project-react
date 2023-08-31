@@ -213,11 +213,11 @@ class RecipeCUDSerializer(RecipeInFollowSerializer):
         )
 
     def to_representation(self, instance):
-        user = self.request.user
-        instance.is_favorited = user.favorites.filter(recipe=instance).exists()
-        instance.is_in_shopping_cart = user.shopping_carts.filter(
-            recipe=instance
-        ).exists()
+        # user = self.request.user
+        # instance.is_favorited = user.favorites.filter(recipe=instance).exists()
+        # instance.is_in_shopping_cart = user.shopping_carts.filter(
+        #     recipe=instance
+        # ).exists()
         return RecipeSerializer(instance, context=self.context).data
 
 
